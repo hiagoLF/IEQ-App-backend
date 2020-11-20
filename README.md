@@ -1,19 +1,19 @@
 # Rotas e descrições
 
 ## Rotas de Usuários
-#### GET /users
+#### GET /users --> OK
 --> Recuperar informações de todos os usuário
 --> Header
     Authorization: Bearer (Usuário Hierarquia max 1)
 
-#### POST /users/create
+#### POST /users/create --> OK
 --> Criar novo usuário
 --> JSON {
         Login,
-        Password_1x,
-        Password_2x, --> Só para confirmação
+        Password,
         Name,
     }
+--> O Servidor deverá gerar um identificator
 --> Retorna um token de acesso
 
 #### GET /users/indexes?page
@@ -37,15 +37,15 @@
         Authorization: Bearer (Usuário Hierararquia min 1)
     }
 
-#### GET /users/:index
---> Recuperar usuário por índicie{
+#### GET /users/:identificator --> OK
+--> Recuperar usuário por identificador{
         Todas as informações
     }
 --> Header {
         Authorization: Bearer (Usuário Hierarquia max 1)
     }
 
-#### POST /users/login
+#### POST /users/login --> OK
 --> JSON {
         login,
         password
@@ -57,24 +57,39 @@
 --> JSON {
         about: 'max 200 caracteres',
         memberSince: 'string', --> Só pode editar uma vez
+        image: 'pequena'
     }
 --> Header {
         Authorization: Bearer (Token)
     }
 
 #### POST /users/edit
---> Editar Dados
---> JSON {Todos os dados a serem editados}
+--> Editar Dados pelo administrador
+--> JSON {
+        Todos os dados a serem editados
+        identificador do usuário
+    }
 --> Header
     Authorization: Bearer (Token do administrador)
 
-#### GET /users/info/me
+#### GET /users/info/me --> OK
 --> Informações do usuário logado
 --> Headers {
         Authorization Bearer (Token usuário)
     }
 
-#### POST /users/editpassword
+#### PUT /users/editpassword --> OK
+--> Alterar Senha
+--> JSON {
+        oldPassword,
+        newPassword,
+    }
+--> Header {
+        Authorization (Token)
+    }
+
+--> Administrador editar o password
+#### PUT /users/editbyadm/password
 --> Alterar Senha
 --> JSON {
         oldPassword,
