@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate');
 
 const UsersSchema = new mongoose.Schema({
     identificator: {
@@ -21,11 +22,14 @@ const UsersSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 40
     },
+    image: {
+        type: String,
+        required: false
+    },
     about: {
         type: String,
         required: false,
         maxlength: 200,
-        default: 'nothing'
     },
     memberSince: {
         type: String,
@@ -42,11 +46,8 @@ const UsersSchema = new mongoose.Schema({
         default: 2,
     },
     ministry: {
-        type: String,
-        required: false
-    },
-    ministryLeader: {
-        type: Number,
+        type: Array,
+        // [id, leader?]
         required: false
     },
     relationShipGroup: {
@@ -58,5 +59,7 @@ const UsersSchema = new mongoose.Schema({
         required: false
     },
 })
+
+UsersSchema.plugin(mongoosePaginate)
 
 module.exports =  mongoose.model('users', UsersSchema)

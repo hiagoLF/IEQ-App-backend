@@ -16,7 +16,7 @@
 --> O Servidor deverá gerar um identificator
 --> Retorna um token de acesso
 
-#### GET /users/indexes?page
+#### GET /users/indexes/page?pg=1 --> OK
 --> Recuperar índicies de todos os usuários {
         index,
         name,
@@ -27,9 +27,9 @@
     }
 --> Informar a página
 
-#### GET /users/index?byname=@
+#### GET /users/index/by?name=hiago --> OK
 --> Recuperar índicies do usuário buscado pelo nome {
-        index,
+        identificator,
         name,
         image,
     }
@@ -52,7 +52,7 @@
     }
 --> Retornar um token de acesso
 
-#### POST /users/editme
+#### PUT /users/edit/me --> OK
 --> Editar Dados
 --> JSON {
         about: 'max 200 caracteres',
@@ -63,7 +63,7 @@
         Authorization: Bearer (Token)
     }
 
-#### POST /users/edit
+#### PUT /users/edit/byadm --> OK
 --> Editar Dados pelo administrador
 --> JSON {
         Todos os dados a serem editados
@@ -88,28 +88,12 @@
         Authorization (Token)
     }
 
---> Administrador editar o password
-#### PUT /users/editbyadm/password
---> Alterar Senha
---> JSON {
-        oldPassword,
-        newPassword1x,
-        newPassword2x,
-    }
---> Header {
-        Authorization (Token)
-    }
-
-
 
 ## Rotas de Informações Gerais (Descriptions)
-#### POST /ministry/create
+#### POST /ministry/create --> OK
 --> Criar ministério
 --> JSON {
         name,
-        cover: image,
-        about,
-        publishers: id, 
     }
 --> Header --> Token de Hierarquia max 1
 
@@ -366,6 +350,8 @@
         Título,
         Descrição
     }
+
+#### COLOCAR A PESSOA NO GRUPO DE RELACIONAMENTO
 
 
 
