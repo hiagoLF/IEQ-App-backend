@@ -74,5 +74,6 @@ module.exports = {
             cb(null, false)
         }
 
+        cb(null, true)
     }
 }

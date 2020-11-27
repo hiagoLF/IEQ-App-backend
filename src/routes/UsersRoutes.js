@@ -26,5 +26,6 @@ routes.put('/edit/me', multer(multerConfig).single('image'), UsersController.edi
 routes.put('/edit/byadm', multer(multerConfig).single('image'), UsersController.editUserDataByAdm)
 routes.get('/indexes/by', UsersController.getUsersIndexByName)
 routes.get('/indexes/page', UsersController.getAllUsersIndexByPage)
+routes.delete('/:identificator', UsersController.deleteUserById)
 
 module.exports = routes;

@@ -10,7 +10,7 @@ const Ministry = new mongoose.Schema({
         required: false
     },
     about: {
-        // [nome, texto, image]
+        // [nome, texto]
         type: Array,
         required: false
     },
@@ -19,8 +19,20 @@ const Ministry = new mongoose.Schema({
         type: Array,
         required: false
     },
+    members: {
+        type: Array,
+        required: false
+    },
+    membersIdentificators: {
+        type: Array,
+        required: false
+    },
     publishers: {
-        type: String,
+        type: Array,
+        required: false
+    },
+    publishersIdentificators: {
+        type: Array,
         required: false
     },
     published: {

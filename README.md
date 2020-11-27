@@ -88,37 +88,61 @@
         Authorization (Token)
     }
 
+#### DELETE /users/:identificator --> OK
+--> Deletar Usuário
+--> Header --> {
+        Token min 1
+    }
+
 
 ## Rotas de Informações Gerais (Descriptions)
 #### POST /ministry/create --> OK
 --> Criar ministério
 --> JSON {
         name,
+        editores,
     }
 --> Header --> Token de Hierarquia max 1
 
-#### GET /ministry/:id/info
---> Retorna todas as informações do ministério
+#### GET /ministry/:id/info --> OK
+--> Retorna todas as informações de um ministério
+--> Todo mundo pode ler. Até quem não está logado
 
-#### POST /ministry/:id/edit
---> Editar informações do ministério
+#### GET /ministry/ids --> OK
+--> Pegar id, nome e imagem dos ministérios.
+
+#### POST /ministry/editone --> OK
+--> Editar informações de um ministério
 --> JSON {
+        id do ministério --> ministryId
         Todas as informações a serem editadas,
-        topics[title, text, imageindex],
-        imagetopic...
+        coverImage --> url
     }
 --> Header --> { 
         Token min 1 ou token do editor
     }
 
-#### GET /ministry/ids
---> Pegar id de todos os ministérios que está inscrito ou de todos se for hierarquia max 1.
+#### PUT /ministry/editmembers --> OK
+--> Inserir e colocar membros
+--> É só enviar a lista nova de membros
+{
+    // identificador - líder
+    ministryId: 'sdfsdfse'
+    members: [
+        ['identificator', true],
+        ['identificator', true],
+        ['identificator', false] 
+    ]
+}
+--> Pode fazer isso o administrador ou o líder do ministério
 
-#### DELETE /ministry/:id
+#### DELETE /ministry/:id --> OK
 --> Deletar ministério
 --> Header --> {
         Token min 1
     }
+
+
 
 
 #### POST /history/create

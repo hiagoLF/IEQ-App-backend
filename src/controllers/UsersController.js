@@ -17,7 +17,7 @@ const s3 = new aws.S3()
 
 // General functions
 async function getLoginToken(id) {
-    return await jwt.sign({ id: id }, authConfig.jwtHash, { expiresIn: 1000 })
+    return await jwt.sign({ id: id }, authConfig.jwtHash, { expiresIn: 86400 })
 }
 
 async function verifyID(userId) {
@@ -409,6 +409,25 @@ module.exports = {
 
         // Enviar de volta
         return res.status(200).json(pageResults)
+    },
 
-    }
+
+    async deleteUserById(req, res){
+        // Pegar usuário que fez a requisição e verificar se é administrador
+        const {userId} = req
+        const admUser = await Users.findById(userId)
+        if(!admUser || admUser.type > 1){
+            return res.status(403).json({error: 'user are not an administrator'})
+        }
+
+        // Pegar o identificador do usuário, deletar no banco de dados e verificar se deletou mesmo
+        const {identificator} = req.params
+        const userDeleted = await Users.findOneAndDelete({identificator})
+        if(!userDeleted){
+            return res.status(404).json({error: 'user not found'})
+        }
+
+        // Enviar mensagem de confirmação
+        return res.status(200).json({message: 'user removal success'})
+    },
 }
