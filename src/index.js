@@ -4,6 +4,7 @@ require('dotenv').config()
 // Project Modules
 const UsersRoutes = require('./routes/UsersRoutes')
 const MinistriesRoutes = require('./routes/MinistriesRoutes')
+const HistoryRoutes = require('./routes/HistoryRoutes')
 
 // Node Modules
 const mongoose = require('mongoose')
@@ -26,5 +27,6 @@ mongoose.connect(
 
 app.use('/users', UsersRoutes)
 app.use('/ministry', MinistriesRoutes)
+app.use('/history', HistoryRoutes)
 
 app.listen(8888)

@@ -1,3 +1,16 @@
+# Projeto IEQApp BackEnd
+Aplicativo para Igreja do Evanjelho Quadrangular em Iguaí Bahia
+Funções: Cadastro de membros e carteirinha de identificação, Inscrições em eventos da igreja, e Informações Gerais.
+
+# Tecnologias Utilizadas
+Base: NodeJs
+Server Framework: Express
+Banco de dados Base: MonogoDB + Mongoose
+Banco de Imagens: Amazon Web Services - S3
+Requisições com imagens: Multer
+Autenticação: Json Web Token (JWT)
+Encriptação: Bcrypt
+
 # Rotas e descrições
 
 ## Rotas de Usuários
@@ -146,36 +159,34 @@
 
 
 #### POST /history/create
---> Criar nova história
+--> Criar nova história --> OK
 --> JSON {
         title,
-        cover,
-        topics[],
-        imagetopics...,
-        links[title, url]
+        description,
+        coverImage --> Image,
+        text,
+        links[title, url],
+        published,
     }
 --> Header --> Usuário Max 1
 
-#### GET /history/ids
---> Recuperar ids das histórias
---> Recuperar {
-        id,
-        name,
-        about
-        coverlink
-    }
+#### GET /history/byadm --> OK
+--> Recuperar todas as histórias se o usuário for administrador
 
-#### GET /history/:id
---> Recuperar tudo de uma história
+#### GET /history/byuser --> OK
+--> Recuperar apenas histórias publicadas
 
-#### POST history/:id/edit
+#### PUT history/:id/edit --> OK
 --> Editar informações
 --> JSON --> Qualquer coisa
 --> Header --> Hierarquia max 1
 
-#### DELETE history/:id
+#### DELETE history/:id --> OK
 --> Deletar história
 --> Header --> Hierarquia max 1
+
+
+
 
 
 
