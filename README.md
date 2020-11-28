@@ -188,7 +188,11 @@ Encriptação: Bcrypt
 
 
 
+#### GET /news/published?page=1 --> OK
+--> Qualquer usuário pega as notícias já publicadas
 
+#### GET /news/unpublished?page=1 --> OK
+--> Author ou administrador pega as notícias não publicadas
 
 #### POST news/create --> OK
 --> Criar nova história
@@ -200,20 +204,18 @@ Encriptação: Bcrypt
         authorIdentificator,
         authorID,
         authorName,
+        text,
     }
 --> Header --> Usuário Max 1
 
-#### GET news/:id
---> Recuperar tudo de uma notícia
-
-#### POST news/:id/edit
+#### POST news/:id/edit --> OK
 --> Editar informações
 --> JSON --> Qualquer coisa
 --> Header --> Hierarquia max 1
 
-#### DELETE news/:id
+#### DELETE news/:id --> OK
 --> Deletar notícia
---> Header --> Hierarquia max 1
+--> Header --> Hierarquia max 1 OU autor da notícia
 
 
 
