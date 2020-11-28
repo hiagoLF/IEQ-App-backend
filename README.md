@@ -158,7 +158,7 @@ Encriptação: Bcrypt
 
 
 
-#### POST /history/create
+#### POST /history/create --> OK
 --> Criar nova história --> OK
 --> JSON {
         title,
@@ -190,35 +190,28 @@ Encriptação: Bcrypt
 
 
 
-#### POST  notice/create
+#### POST news/create --> OK
 --> Criar nova história
 --> JSON {
         title,
         cover,
-        topics[],
-        imagetopics...,
         links[title, url]
+        published,
+        authorIdentificator,
+        authorID,
+        authorName,
     }
 --> Header --> Usuário Max 1
 
-#### GET  notice/ids
---> Recuperar ids das notícias
---> Recuperar {
-        id,
-        name,
-        about
-        coverlink
-    }
-
-#### GET  notice/:id
+#### GET news/:id
 --> Recuperar tudo de uma notícia
 
-#### POST notice/:id/edit
+#### POST news/:id/edit
 --> Editar informações
 --> JSON --> Qualquer coisa
 --> Header --> Hierarquia max 1
 
-#### DELETE notice/:id
+#### DELETE news/:id
 --> Deletar notícia
 --> Header --> Hierarquia max 1
 
