@@ -220,38 +220,35 @@ Encriptação: Bcrypt
 
 
 
-#### POST  reflections/create
+#### POST  reflections/create --> OK
 --> Criar nova reflexão
 --> JSON {
         title,
         description,
         author,
         cover,
-        topics[], (opcional)
-        imagetopics..., (opcional)
+        text, (opcional)
         links[title, url] (opcional)
         link youtube Vídeo (opcional)
+        published
     }
 --> Header --> Usuário Max 1
 
-#### GET  reflections/ids
---> Recuperar ids das reflexões
---> Recuperar {
-        id,
-        name,
-        about
-        coverlink
-    }
+#### GET  /reflections/published?page=1 --> OK
+--> Recuperar todas as reflexões publicas
+--> Paginate
 
-#### GET  reflections/:id
---> Recuperar tudo de uma reflexão
+#### GET  /reflections/unpublished?page=1 --> OK
+--> Recuperar todas as reflexões não publicas
+--> Paginate
+--> Apenasa ADM
 
-#### POST reflections/:id/edit
+#### PUT reflections/:id/edit --> OK
 --> Editar informações
 --> JSON --> Qualquer coisa
 --> Header --> Hierarquia max 1
 
-#### DELETE reflections/:id
+#### DELETE reflections/:id --> OK
 --> Deletar reflexão
 --> Header --> Hierarquia max 1
 
@@ -355,33 +352,6 @@ Encriptação: Bcrypt
 --> Confirmar inscrição de usuário
 
 
-
-
-
-#### POST /relationgroup/create
---> Criar um grupo de relacionamento
---> JSON {
-        name,
-        description,
-    }
-
-#### POST /relationgroup/ids
---> Recuperar ids dos grupos de relacionamentos
-
-#### PUT /relationgroups/:id
---> Editar dados {
-        name,
-        description,
-        leaders,
-    }
-
-#### POST /relationgroups/:id/createlesson
---> Enviar nova lição {
-        Título,
-        Descrição
-    }
-
-#### COLOCAR A PESSOA NO GRUPO DE RELACIONAMENTO
 
 
 
