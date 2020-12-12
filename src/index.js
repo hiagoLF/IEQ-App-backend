@@ -7,6 +7,7 @@ const MinistriesRoutes = require('./routes/MinistriesRoutes')
 const HistoryRoutes = require('./routes/HistoryRoutes')
 const NewsRoutes = require('./routes/NewsRoutes')
 const ReflectionsRoutes = require('./routes/ReflectionsRoutes')
+const ShepherdsRoutes = require('./routes/ShepherdRoutes')
 
 // Node Modules
 const mongoose = require('mongoose')
@@ -32,5 +33,6 @@ app.use('/ministry', MinistriesRoutes)
 app.use('/history', HistoryRoutes)
 app.use('/news', NewsRoutes)
 app.use('/reflections', ReflectionsRoutes)
+app.use('/shepherds', ShepherdsRoutes)
 
 app.listen(8888)

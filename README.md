@@ -256,64 +256,31 @@ Encriptação: Bcrypt
 
 
 
-#### POST  minister/create
---> Criar nova pastor
+#### POST /shepherd/create --> Ok
+--> Criar novo pastor
 --> JSON {
         name,
         cover,
         office,
-        topics
+        text,
         telephone,
         links
     }
 --> Header --> Usuário Max 1
 
-#### GET  minister/ids
---> Recuperar ids dos pastores
---> Recuperar {
-        id,
-        name,
-        about
-        coverlink
-    }
+#### GET /shepherds/published?page=1 --> OK
 
-#### GET  minister/:id
---> Recuperar tudo de um pastor
+#### GET /shepherds/unpublished?page=1 --> OK
 
-#### POST minister/:id/edit
+#### PUT /shepherds/:id/edit --> OK
 --> Editar informações
 --> JSON --> Qualquer coisa
 --> Header --> Hierarquia max 1
 
-#### DELETE minister/:id
+#### DELETE /shepherds/:id --> OK
 --> Deletar pastor
 --> Header --> Hierarquia max 1
 
-
-
-
-
-#### POST /album/create
---> Criar album de fotos
---> JSON {
-        title,
-        description: opcional,
-        date,
-        cover,
-        images...
-    }
-
-#### POST /album/ids
---> Retorna ids dos albuns
-
-#### GET /album/:id
---> Todas as informações de um album
-
-#### PUT /album/:id
---> Editar um album --> Excluir e add fotos
-
-#### DELETE /album/:id
---> Deletar album
 
 
 
@@ -363,3 +330,29 @@ Encriptação: Bcrypt
         Youtube,
         Twitter
     }
+
+
+
+
+
+#### POST /album/create
+--> Criar album de fotos
+--> JSON {
+        title,
+        description: opcional,
+        date,
+        cover,
+        images...
+    }
+
+#### POST /album/ids
+--> Retorna ids dos albuns
+
+#### GET /album/:id
+--> Todas as informações de um album
+
+#### PUT /album/:id
+--> Editar um album --> Excluir e add fotos
+
+#### DELETE /album/:id
+--> Deletar album
