@@ -285,38 +285,38 @@ Encriptação: Bcrypt
 
 
 
-#### POST /event/create
+#### POST /event/create --> OK
 --> Criar um evento {
         name,
         date,
         description,
-        topics[]
-        imageTopics...
+        text,
         subscribers{id, date, confirmed},
         creator,
         openToSubscribe,
         ministry,
+        coverImage
     }
 
-#### GET /event/ids
---> Recuperar ids
-
-#### GET /event/:id
---> Ler informações do evento
-
-#### PUT /events/:id
+#### PUT /events/:id --> OK
 --> Editar evento
---> Quem pode é o adm ou o líder do ministério
+--> Quem pode é o adm ou quem criou o evento
 
-#### DELETE /events/:id
+#### DELETE /events/:id --> OK
 --> Deletar evento
+--> ADM ou quem criou
 
 #### POST /events/:id/subscribe
 --> Se inscrever no evento
 --> enviar token pela header
+--> Receber código de inscrição que será mostrado no QrCode
 
-#### PUT /events/:eventid/confirm/:userid
+#### PUT /events/:eventid/confirm/
 --> Confirmar inscrição de usuário
+--> Só quem pode confirmar é o adm ou líderes do ministério
+{
+    Enviar Token de inscrição que o usuário mostrou no QrCode
+}
 
 
 

@@ -37,6 +37,7 @@ const UsersSchema = new mongoose.Schema({
         default: 0
     },
     event: {
+        // ID do evento, Confirmado ou não
         type: [String, Boolean],
         required: false
     },
@@ -50,10 +51,7 @@ const UsersSchema = new mongoose.Schema({
         // [id, leader?]
         required: false
     },
-    relationShipGroup: {
-        type: [String],
-        required: false
-    },
+    // Número de membro
     ticket: {
         type: Number,
         required: false
