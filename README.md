@@ -306,30 +306,49 @@ Encriptação: Bcrypt
 --> Deletar evento
 --> ADM ou quem criou
 
-#### POST /events/:id/subscribe
+#### POST /events/:id/subscribe --> OK
 --> Se inscrever no evento
 --> enviar token pela header
 --> Receber código de inscrição que será mostrado no QrCode
 
-#### PUT /events/:eventid/confirm/
+juju --> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYzJkMzZmNjVlOGE1M2M3MDRlZTJlNyIsImlhdCI6MTYwODA1NzQ3MSwiZXhwIjoxNjA4MTQzODcxfQ.2RDuV7UU412ZU9xUD6Y52tuNnueeksvvG0nDH4lV4zY
+
+bundu --> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYzEwN2I4YmZmYTVjMjkxMGU3ZmI5MCIsImlhdCI6MTYwODA1NzkxMSwiZXhwIjoxNjA4MTQ0MzExfQ.zwESJvI2a6x4EkXkwuomMnkJUC3lpIwbnDrkl-0kEig
+
+#### DELETE /events/:id/unsubscribe --> OK
+--> Se desinscrever
+
+#### DELETE /events/:id/unsubscribe/:user --> OK
+--> desinscrever um usuário pelo identificator
+--> Apenas adms e donos do evento podem.
+
+#### PUT /events/:eventid/confirm/ --> OK
 --> Confirmar inscrição de usuário
 --> Só quem pode confirmar é o adm ou líderes do ministério
 {
-    Enviar Token de inscrição que o usuário mostrou no QrCode
+    Enviar Identificator que o usuário mostrou no QrCode
 }
 
+#### PUT /events/:eventid/subscribe/byadm --> OK
+--> ADM ou criador do evento inscreve alguém e já confirma
 
 
 
 
-#### POST /social/edit
+#### POST /social/create --> OK
 --> Criar ou editar dados das redes sociais
 --> {
-        Instagram,
-        Facebook,
-        Youtube,
-        Twitter
+        name,
+        adress,
+        icon
     }
+--> Só o adm faz isso
+
+#### GET /social --> OK
+--> Pegar redes sociais
+
+#### DELETE /social/:id --> OK
+--> Deletar rede social pelo id
 
 
 
@@ -356,3 +375,9 @@ Encriptação: Bcrypt
 
 #### DELETE /album/:id
 --> Deletar album
+
+
+juju --> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGI0YTJkNGRiYjA0MzIwMDdhMmJiZiIsImlhdCI6MTYwODIwNjg5MywiZXhwIjoxNjA4MjkzMjkzfQ.Dhlg1yaXcS9NTZckgrFs-NtFMu1LoQJpW9bgzPaXwYE
+
+bubu --> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZGI0YTUxNGRiYjA0MzIwMDdhMmJjMCIsImlhdCI6MTYwODIwNjkyOSwiZXhwIjoxNjA4MjkzMzI5fQ.Y07Nqg-WsIN83N5xgWGZywlHh_Z_Y2Nx-qwuGiu1y2c
+

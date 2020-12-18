@@ -38,7 +38,7 @@ const UsersSchema = new mongoose.Schema({
     },
     event: {
         // ID do evento, Confirmado ou não
-        type: [String, Boolean],
+        type: Array,
         required: false
     },
     type: {

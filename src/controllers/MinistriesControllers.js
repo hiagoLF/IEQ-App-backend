@@ -1,8 +1,61 @@
 const Ministries = require('../models/MinistriesSchema')
 const Users = require('../models/UsersSchema')
 const aws = require('aws-sdk')
+const mongooseGF = require('../global_functions/mongooseGF')
 
 const s3 = new aws.S3()
+
+// Functions
+function defineLeadersAndGeneralMembers(members) {
+    const leaderMembers = []
+    const generalMembers = []
+    for (member of members) {
+        if (member[1]) {
+            leaderMembers.push(member[0])
+            generalMembers.push(member[0])
+
+        } else {
+            generalMembers.push(member[0])
+        }
+    }
+    return [leaderMembers, generalMembers]
+}
+
+// Ainda não deu pra testar essa aqui
+async function RemoveMinistryOfUsers(membersIds, ministryId) {
+    for (var memberId of membersIds) {
+        const user = await mongooseGF.getUser(memberId)
+        for (var i = 0; i < user.ministry.length; i++) {
+            console.log(user.ministry[i][0])
+            if (user.ministry[i][0] == ministryId) {
+                user.ministry.splice(i, 1)
+            }
+        }
+        console.log(user)
+        await mongooseGF.saveToData(user)
+    }
+}
+
+async function includeMinistryInUsers(generalMembersId, ministryId) {
+    for (var memberId of generalMembersId) {
+        const user = await mongooseGF.getUser(memberId)
+        user.ministry.push([ministryId, false])
+        await mongooseGF.saveToData(user)
+    }
+    return true
+}
+
+async function defineMinistryLeaderTrueInUsers(leaderMembersId, ministryId) {
+    for (var memberId of leaderMembersId) {
+        const member = await mongooseGF.getUser(memberId)
+        for (var i = 0; i < member.ministry.length; i++) {
+            if (member.ministry[i][0] == ministryId) {
+                member.ministry[i][1] = true
+            }
+        }
+        await mongooseGF.saveToData(member, mode = 'user')
+    }
+}
 
 module.exports = {
     async createMinistry(req, res) {
@@ -29,16 +82,16 @@ module.exports = {
 
         // Converter os identificators dos editores em _id dos editores
         var publishersIds = []
-        if(publishers){
-            for(publisher of publishers){
-                publishersIds.push((await Users.findOne({identificator: publisher}).select('_id'))._id)
+        if (publishers) {
+            for (publisher of publishers) {
+                publishersIds.push((await Users.findOne({ identificator: publisher }).select('_id'))._id)
             }
         }
-        
+
         // Criar um ministério com o nome e os editores e as identificações dos editores
-        const newMinistry = await Ministries.create({ 
-            name, 
-            publishers: publishersIds, 
+        const newMinistry = await Ministries.create({
+            name,
+            publishers: publishersIds,
             publishersIdentificators: publishers,
             members: publishersIds,
             membersIdentificators: publishers,
@@ -50,9 +103,9 @@ module.exports = {
         }
 
         // Inserir o id do ministério nos editores
-        for(publisherId of publishersIds){
+        for (publisherId of publishersIds) {
             const userOnMinistry = await Users.findById(publisherId)
-            userOnMinistry.ministry.push({id: newMinistry._id, leader: true})
+            userOnMinistry.ministry.push({ id: newMinistry._id, leader: true })
             await userOnMinistry.save()
         }
 
@@ -61,38 +114,38 @@ module.exports = {
 
     },
 
-    async editMinistry(req, res){
+    async editMinistry(req, res) {
         // Pegar id de quem fez a requisição
-        const {userId} = req
+        const { userId } = req
 
         // Buscar usuário no banco de dados
         const user = await Users.findById(userId)
 
         // Pegar id do ministério que será editado
-        const {ministryId} = req.body
+        const { ministryId } = req.body
 
         // Buscar o ministério no banco de dados
         const ministryOfEdition = await Ministries.findById(ministryId)
 
         // Verificar se este ministério existe mesmo
-        if(!ministryOfEdition){
-            return res.status(404).json({error: 'ministry not found'})
+        if (!ministryOfEdition) {
+            return res.status(404).json({ error: 'ministry not found' })
         }
-        
+
         // Verificar se o usuário está na lista de publishers
         var included = false
-        for(publisher of ministryOfEdition.publishers){
+        for (publisher of ministryOfEdition.publishers) {
             console.log(publisher, user._id)
-            if(publisher == user._id.toString()){
+            if (publisher == user._id.toString()) {
                 included = true
                 break
             }
         }
 
         // Se o usuário não estiver incluído ou não for adm
-        if(!included){
-            if(user.type > 1){
-                return res.status(403).json({error: 'user are not a publisher or adm'})
+        if (!included) {
+            if (user.type > 1) {
+                return res.status(403).json({ error: 'user are not a publisher or adm' })
             }
         }
 
@@ -100,27 +153,27 @@ module.exports = {
         // name, cover, about[título, texto], call, published
 
         // Pegar os dados
-        const {name, about, call, published} = req.body
+        const { name, about, call, published } = req.body
 
         // Modificar os dados símples
-        if(name){
+        if (name) {
             ministryOfEdition.name = name
         }
-        if(call){
-            if(call.length === 2){
+        if (call) {
+            if (call.length === 2) {
                 ministryOfEdition.call = call
             }
         }
-        if(published != undefined){
+        if (published != undefined) {
             ministryOfEdition.published = published
         }
-        if(about){
+        if (about) {
             ministryOfEdition.about = about
         }
 
         // pegar file
-        const {file} = req
-        if(file){
+        const { file } = req
+        if (file) {
             s3.deleteObject({
                 Bucket: 'ieq-app-image-storage/covers-images',
                 Key: ministryOfEdition.cover,
@@ -133,44 +186,44 @@ module.exports = {
         const savedMinistry = await ministryOfEdition.save()
 
         // Verificar se salvou mesmo
-        if(!savedMinistry){
+        if (!savedMinistry) {
             s3.deleteObject({
                 Bucket: 'ieq-app-image-storage/covers-images',
                 Key: ministryOfEdition.cover,
             }, () => null
             )
             ministryOfEdition.cover = file.key
-            return res.status(400).json({error: 'something went wrong'})
+            return res.status(400).json({ error: 'something went wrong' })
         }
 
         // Mensagem de confirmação
-        return res.status(200).json({message: 'successful on ministry edition'})
+        return res.status(200).json({ message: 'successful on ministry edition' })
     },
 
 
-    async findMinistriesIdentifications(req, res){
+    async findMinistriesIdentifications(req, res) {
         // Pegar id, name, image de todos os ministérios publicados
-        const ministries = await Ministries.find({published: true}).select('_id name cover')
+        const ministries = await Ministries.find({ published: true }).select('_id name cover')
 
         // Ver se pegou mesmo os ministérios
-        if(!ministries){
-            return res.status(400).json({error: 'error on getting ministries'})
+        if (!ministries) {
+            return res.status(400).json({ error: 'error on getting ministries' })
         }
 
         return res.status(200).json(ministries)
     },
 
 
-    async getInfosById(req, res){
+    async getInfosById(req, res) {
         // Pegar o id que foi solicitado
-        const {id} = req.params
+        const { id } = req.params
 
         // Buscar o ministério no banco de dados
         const ministry = await Ministries.findById(id).select('-members -publishers')
 
         // Ver se encontrou algo
-        if(!ministry){
-            return res.status(404).json({error: 'ministry not found'})
+        if (!ministry) {
+            return res.status(404).json({ error: 'ministry not found' })
         }
 
         // Enviar todas as informações e os identificators das pessoas
@@ -178,151 +231,92 @@ module.exports = {
     },
 
 
-    async deleteMinistryById(req, res){
+    async deleteMinistryById(req, res) {
         // Pegar o id de quem está fazendo a requisição
-        const {userId} = req
+        const { userId } = req
 
         // Buscar este usuário no banco de dados e verificar se é administrador
         const admUser = await Users.findById(userId)
-        if(!admUser || admUser.type > 1){
-            return res.status(403).json({error: 'user are not an administrator'})
+        if (!admUser || admUser.type > 1) {
+            return res.status(403).json({ error: 'user are not an administrator' })
         }
 
         // Pegar o id do ministério que ser deseja deletar
-        const {id} = req.params
+        const { id } = req.params
 
         // Deletar esse ministério
         const deletedMinistry = await Ministries.findByIdAndDelete(id)
 
         // Ver se havia mesmo um ministério
-        if(!deletedMinistry){
-            return res.status(404).json({error: 'ministry not found'})
+        if (!deletedMinistry) {
+            return res.status(404).json({ error: 'ministry not found' })
         }
 
-        return res.status(200).json({message: 'the ministry was deleted'})
+        return res.status(200).json({ message: 'the ministry was deleted' })
     },
 
 
-    async editMembersContent(req, res){
+    async editMembersContent(req, res) {
         // id do usuário que fez a requisição
-        const {userId} = req
+        const { userId } = req
 
         // Buscar no banco e verificar se deu certo
-        const user = await Users.findById(userId)
-        if(!user){
-            return res.status(400).json({error: 'user not found'})
-        }
-
-        // Pegar o id do ministério
-        const {ministryId} = req.body
+        const user = await mongooseGF.getUser(userId)
+        !user && res.status(400).json({ error: 'user not found' })
 
         // Buscar ministério e verificar se deu tudo certo
-        const ministry = await Ministries.findById(ministryId)
-        if(!ministry){
-            return res.status(404).json({error: 'ministry not found'})
-        }
+        const { ministryId } = req.body
+        const ministry = await mongooseGF.getMinistry(ministryId)
+        !ministry && res.status(404).json({ error: 'ministry not found' })
 
         // Instanciar se o usuário é um publisher
-        var isPublisher = false
-        for(publisher of ministry.publishers){
-            if(userId == publisher.toString()){
-                isPublisher = true
-                break
-            }
-        }
+        const isPublisher = ministry.publishers.indexOf(user._id) != -1
+        // VERIFICAR ESSA CONDIÇÃO DEPOIS
 
         // Verificar se o usuário é um publisher ou adm
-        if(!isPublisher){
-            if(user.type > 1){
-                return res.status(403).json({error: 'user do not have permitions to edit this ministry'})
+        if (!isPublisher) {
+            if (user.type > 1) {
+                return res.status(403).json({ error: 'user do not have permitions to edit this ministry' })
             }
         }
 
         // pegar a lista de members para a edição
-        const {members} = req.body
-
-        // Ver se existe members mesmo
-        if(!members){
-            return res.status(400).json({error: 'members not provided'})
+        const { members } = req.body
+        if (!members) {
+            return res.status(400).json({ error: 'members not provided' })
         }
 
         // Separar apenas líderes e membros no geral
-        var leaderMembers = []
-        var generalMembers = []
-        for(member of members){
-            if(member[1]){
-                leaderMembers.push(member[0])
-                generalMembers.push(member[0])
-            }else{
-                generalMembers.push(member[0])
-            }
-        }
+        const [leaderMembers, generalMembers] = defineLeadersAndGeneralMembers(members)
 
         // converter líderes e não líderes em id
-        var leaderMembersId = []
-        var generalMembersId = []
-        for(leaderMember of leaderMembers){
-            leaderMembersId.push((await Users.findOne({identificator: leaderMember}).select('_id'))._id)
-        }
-        for(generalLeaderMember of generalMembers){
-            generalMembersId.push((await Users.findOne({identificator: generalLeaderMember}).select('_id'))._id)
-        }
+        const leaderMembersId = await mongooseGF.convertUserIdentificatorsToUsersIDs(leaderMembers)
+        const generalMembersId = await mongooseGF.convertUserIdentificatorsToUsersIDs(generalMembers)
 
         // leaderMembers --> Identificators
         // generalMembers --> Identificators
         // leaderMembersId --> Ids
         // generalMembersId --> Ids
 
-        // Antes de salvar os dados nos ministérios, percorrer todos usuários que são membros do ministério e excluir o ministério deles
-        // Percorrendo os ids dos membros...
-        for(member of ministry.members){
-            var currentMember = await Users.findById(member)
-            // Percorrendo os ministérios dentro do membro
-            for(var i = 0; i<currentMember.ministry.length; i++){
-                if(currentMember.ministry[i][0] == ministry._id.toString()){
-                    // excluir o ministério do membro
-                    currentMember.ministry.splice(i, 1)
-                    break
-                }
-            }
-            await currentMember.save()
+        // Ir em cada pessoa do ministério e excluir o ministério deles
+        await RemoveMinistryOfUsers(ministry.members, ministryId)
+
+        // Percorrer generalMembersId e colocar o ministério em cada pessoa
+        await includeMinistryInUsers(generalMembersId, ministryId)
+
+        // Percorrer leaderMembersId e colocar leader true em cada uma
+        await defineMinistryLeaderTrueInUsers(leaderMembersId, ministryId)
+
+        // Ir no ministério e atualizar toda lista de members e publishers id e identificator
+        data = {
+            publishers: leaderMembersId,
+            publishersIdentificators: leaderMembers,
+            members: generalMembersId,
+            membersIdentificators: generalMembers
         }
+        await mongooseGF.editMinistry(ministryId, data)
 
-        // Inserir os novos dados no ministério
-        ministry.members = generalMembersId
-        ministry.publishers = leaderMembersId
-        ministry.membersIdentificators = generalMembers
-        ministry.publishersIdentificators = leaderMembers
-
-        // Salvar o ministério
-        const editedMinistry = await ministry.save()
-
-        // Verificar se salvou mesmo
-        if(!editedMinistry){
-            return res.status(400).json({error: 'failed on ministry editing'})
-        }
-
-        // Colocar ministérios nos usuários
-        for(member of editedMinistry.members){
-            var currentMember = await Users.findById(member)
-            var isLeader = false
-            for(pub of editedMinistry.publishers){
-                if(pub.toString() === currentMember._id.toString()){
-                    isLeader = true
-                    break
-                }
-            }
-            currentMember.ministry.push([editedMinistry._id, isLeader])
-            await currentMember.save()
-        }
-
-        // Confirmação
-        return res.status(200).json({message: 'success on ministry editing'})
-
-        // O que há de errado?
-        // Na tabela de ministérios a atualização ocorre como esperado
-        // Na tabela de usuários o comportamento é estranho
-
+        return res.status(200).json('ok')
 
     },
 }

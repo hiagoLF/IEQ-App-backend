@@ -9,6 +9,7 @@ const NewsRoutes = require('./routes/NewsRoutes')
 const ReflectionsRoutes = require('./routes/ReflectionsRoutes')
 const ShepherdsRoutes = require('./routes/ShepherdRoutes')
 const EventsRoutes = require('./routes/EventsRoutes')
+const SocialMediaRoutes = require('./routes/SocialMediaRoutes')
 
 // Node Modules
 const mongoose = require('mongoose')
@@ -36,5 +37,6 @@ app.use('/news', NewsRoutes)
 app.use('/reflections', ReflectionsRoutes)
 app.use('/shepherds', ShepherdsRoutes)
 app.use('/events', EventsRoutes)
+app.use('/social', SocialMediaRoutes)
 
 app.listen(8888)

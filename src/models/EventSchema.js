@@ -20,10 +20,12 @@ const EventSchema = new mongoose.Schema({
         required: false
     },
     subscribers: {
+        // {identificator, confirmed}
         type: Array,
         required: false
     },
     creator: {
+        // creator --> id de quem criou
         type: String,
         required: true
     },
