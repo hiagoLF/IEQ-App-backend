@@ -33,6 +33,8 @@ const storageTypes = {
                 cb(null, 'ieq-app-image-storage/covers-images')
             } else if (file.fieldname === 'icon'){
                 cb(null, 'ieq-app-image-storage/icons')
+            } else if (file.fieldname === 'albumImage'){
+                cb(null, 'ieq-app-image-storage/albuns-images')
             }
         },
         //Se contentType não for definido, o navegador vai baixar o app ao invés de exibir

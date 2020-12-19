@@ -2,6 +2,8 @@ const Users = require('../models/UsersSchema')
 const Event = require('../models/EventSchema')
 const Ministry = require('../models/MinistriesSchema')
 const SocialMedia = require('../models/SocialMediaSchema')
+const Albuns = require('../models/AlbumSchema')
+const awsGF = require('./awsGlobalFunctions')
 
 const error = undefined
 
@@ -123,4 +125,75 @@ module.exports = {
         }
     },
 
+
+    async getAlbuns(page = 1, published = true){
+        const albuns = await Albuns.paginate(
+            {
+                published
+            },
+            {
+                limit: 10,
+                page: page
+            }
+        ).catch((err) => error = err)
+        if(error || !albuns){
+            return undefined
+        }
+        return albuns
+    },
+
+    async getAlbumById(albumid){
+        const album = await Albuns.findById(albumid).catch((err) => error = err)
+        console.log(album)
+        if(error || !album){
+            return undefined
+        }
+        return album
+    },
+
+    async deleteImageInAlbum(albumid, imagekey){
+        const albumToEdit = await this.getAlbumById(albumid)
+        if(!albumToEdit){
+            return undefined
+        }
+        const index = albumToEdit.images.indexOf(imagekey)
+        if(index != -1){
+            albumToEdit.images.splice(index, 1)
+            const editedAlbum = await this.saveToData(albumToEdit)
+            if(editedAlbum){
+                awsGF.deleteFile(imagekey, 'ieq-app-image-storage/albuns-images')
+                return true
+            }
+        }
+        return undefined
+    },
+
+    async deleteAlbum(albumid){
+        // Deletar o album e pegar informações do album deletado
+        const deletedAlbum = await Albuns.findByIdAndDelete(albumid).catch((err) => error = err)
+        // Se deletou mesmo...
+        if(!error && deletedAlbum ){
+            // Percorrer images do album...
+            for(var imagekey of deletedAlbum.images){
+                // Deletar cada uma das images
+                awsGF.deleteFile(imagekey, 'ieq-app-image-storage/albuns-images')
+            }
+            return true
+        }
+        return undefined
+    },
+
+
+    async includeImageToDataAlbum(filekey, albumid){
+        const album = await this.getAlbumById(albumid)
+        if(!album){
+            return undefined
+        }
+        album.images.push(filekey)
+        const result = await this.saveToData(album)
+        if(!result){
+            return undefined
+        }
+        return true
+    }
 }

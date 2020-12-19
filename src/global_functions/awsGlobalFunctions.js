@@ -11,5 +11,21 @@ module.exports = {
             Key: fileKey,
         }, () => null
         )
+    },
+
+    deleteArrayFiles(filesKeys, Bucket){
+        for(var file of filesKeys){
+            console.log(file)
+            this.deleteFile(file.key, Bucket)
+        }
+    },
+
+
+    getImageKeys(files){
+        var keys = []
+        for(var file of files){
+            keys.push(file.key)
+        }
+        return keys
     }
 }
