@@ -4,6 +4,9 @@ const Users = require('../models/UsersSchema')
 const awsGF = require('../global_functions/awsGlobalFunctions')
 
 const mongoose = require('mongoose')
+const awsGlobalFunctions = require('../global_functions/awsGlobalFunctions')
+
+const error = undefined
 
 module.exports = {
     async createHistory(req, res) {
@@ -12,7 +15,7 @@ module.exports = {
 
         // Pegar o usuário que fez a requisição e verificar se é um administrador
         const { userId } = req
-        const admUser = await Users.findById(userId)
+        const admUser = await Users.findById(userId).catch((err) => error = err)
         if (!admUser || admUser.type > 1) {
             if (file) {
                 awsGF.deleteFile(file.key, 'ieq-app-image-storage/covers-images')
@@ -24,7 +27,7 @@ module.exports = {
         const { title, descripription, text, links, published } = req.body
 
         // Verificar se já existe um título semelhante no banco de dados
-        const ExistingHistory = await Histories.findOne({ title })
+        const ExistingHistory = await Histories.findOne({ title }).catch((err) => error = err)
         if (ExistingHistory) {
             if (file) {
                 awsGF.deleteFile(file.key, 'ieq-app-image-storage/covers-images')
@@ -40,7 +43,7 @@ module.exports = {
             links,
             published,
             cover: file ? file.key : null
-        })
+        }).catch((err) => error = err)
 
         // Verificar se criou mesmo
         if (!newHistory) {
@@ -97,7 +100,7 @@ module.exports = {
 
         // Verificar se quem fez a requisição é um adiministrador
         const { userId } = req
-        const admUser = await Users.findById(userId)
+        const admUser = await Users.findById(userId).catch((err) => error = err)
         if (!admUser || admUser.type > 1) {
             if (file) {
                 awsGF.deleteFile(file.key, 'ieq-app-image-storage/covers-images')
@@ -108,7 +111,7 @@ module.exports = {
         // Buscar a history pelo id informado
         const { id } = req.params
 
-        const historyToEdit = await Histories.findById(id) || undefined
+        const historyToEdit = await Histories.findById(id).catch((err) => error = err)
 
         // Verificar se realmente existe esta história
         if (!historyToEdit) {
@@ -145,7 +148,7 @@ module.exports = {
         }
 
         // Salvar os novos dados
-        const editedHistory = await historyToEdit.save()
+        const editedHistory = await historyToEdit.save().catch((err) => error = err)
 
         // Verificar se salvou mesmo
         if (!editedHistory) {
@@ -163,19 +166,20 @@ module.exports = {
     async deleteHistoryById(req, res){
         // Verificar se é administrador
         const {userId} = req
-        const admUser = await Users.findById(userId)
+        const admUser = await Users.findById(userId).catch((err) => error = err)
         if(!admUser || admUser.type > 1){
             return res.status(403).json({error: 'user are not an administrator'})
         }
 
         // Deletar a história
         const {id} = req.params
-        const deletedHistory = await Histories.findByIdAndDelete(id)
+        const deletedHistory = await Histories.findByIdAndDelete(id).catch((err) => error = err)
         if(!deletedHistory){
             return res.status(404).json({error: 'history not found'})
         }
 
         // Mensagem de confirmação
+        deletedHistory.cover && awsGlobalFunctions.deleteFile(deletedHistory.cover, 'ieq-app-image-storage/covers-images')
         return res.status(200).json({message: 'history was deleted'})
     },
 

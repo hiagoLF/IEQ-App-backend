@@ -8,6 +8,9 @@ const aws = require('aws-sdk')
 const Users = require('../models/UsersSchema')
 const authConfig = require('../config/authConfig.json')
 const { where, $where } = require('../models/UsersSchema')
+const awsGlobalFunctions = require('../global_functions/awsGlobalFunctions')
+
+var error = undefined
 
 // Users Schema configuration
 
@@ -231,10 +234,11 @@ module.exports = {
         const { about, memberSince } = req.body
 
         // Buscando Usuário
-        const user = await Users.findById(userId)
+        const user = await Users.findById(userId).catch((err) => error = err)
 
         // Verificando se o usuário exista
-        if (!user) {
+        if (!user || error) {
+            awsGlobalFunctions.deleteFile(file.key, 'ieq-app-image-storage/users-profile-image')
             res.status(404).json({ error: 'no user found' })
         }
 
@@ -264,7 +268,12 @@ module.exports = {
             }
         }
 
-        await user.save()
+        await user.save().catch((err) => error = err)
+
+        if(!user){
+            awsGlobalFunctions.deleteFile(file.key, 'ieq-app-image-storage/users-profile-image')
+            res.status(400).json({ error: 'failed on users update'})
+        }
 
         // Retirando senha e ID
         user.password = null
@@ -283,18 +292,20 @@ module.exports = {
         const { file } = req
 
         // Pegar este usuário no banco de dados
-        const admUser = await Users.findById(userId)
+        const admUser = await Users.findById(userId).catch((err) => error = err)
 
         // Ver se pegou algum usuário mesmo e se ele é administrador
-        if (!admUser || admUser.type > 1) {
+        if (error || !admUser || admUser.type > 1) {
+            awsGlobalFunctions.deleteFile(file.key, 'ieq-app-image-storage/users-profile-image')
             return res.status(403).json({ error: 'user are not an administrator' })
         }
 
         // Buscar o usuário que será modificado por meio do identificador
-        const userUpdated = await Users.findOne({ identificator })
+        const userUpdated = await Users.findOne({ identificator }).catch((err) => error = err)
 
         // Ver se encontrou o tal usuário que será modificado
-        if (!userUpdated) {
+        if (error || !userUpdated) {
+            awsGlobalFunctions.deleteFile(file.key, 'ieq-app-image-storage/users-profile-image')
             return res.status(404).json('user not found')
         }
 
@@ -335,9 +346,10 @@ module.exports = {
         }
 
         // Salvar modificações
-        const result = await userUpdated.save()
+        const result = await userUpdated.save().catch((err) => error = err)
 
         if (!result) {
+            awsGlobalFunctions.deleteFile(file.key, 'ieq-app-image-storage/users-profile-image')
             return res.status(400).json('something went wrong')
         }
 

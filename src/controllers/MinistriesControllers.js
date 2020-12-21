@@ -2,8 +2,12 @@ const Ministries = require('../models/MinistriesSchema')
 const Users = require('../models/UsersSchema')
 const aws = require('aws-sdk')
 const mongooseGF = require('../global_functions/mongooseGF')
+const awsGlobalFunctions = require('../global_functions/awsGlobalFunctions')
 
 const s3 = new aws.S3()
+
+
+const error = undefined
 
 // Functions
 function defineLeadersAndGeneralMembers(members) {
@@ -115,6 +119,8 @@ module.exports = {
     },
 
     async editMinistry(req, res) {
+        const { file } = req
+
         // Pegar id de quem fez a requisição
         const { userId } = req
 
@@ -125,10 +131,11 @@ module.exports = {
         const { ministryId } = req.body
 
         // Buscar o ministério no banco de dados
-        const ministryOfEdition = await Ministries.findById(ministryId)
+        const ministryOfEdition = await Ministries.findById(ministryId).catch((err) => error = err)
 
         // Verificar se este ministério existe mesmo
-        if (!ministryOfEdition) {
+        if (error || !ministryOfEdition) {
+            file && awsGlobalFunctions.deleteFile(file.key,'ieq-app-image-storage/covers-images')
             return res.status(404).json({ error: 'ministry not found' })
         }
 
@@ -172,7 +179,6 @@ module.exports = {
         }
 
         // pegar file
-        const { file } = req
         if (file) {
             s3.deleteObject({
                 Bucket: 'ieq-app-image-storage/covers-images',
@@ -183,10 +189,10 @@ module.exports = {
         }
 
         // Salvar alterações
-        const savedMinistry = await ministryOfEdition.save()
+        const savedMinistry = await ministryOfEdition.save().catch((err) => error = err)
 
         // Verificar se salvou mesmo
-        if (!savedMinistry) {
+        if (error || !savedMinistry) {
             s3.deleteObject({
                 Bucket: 'ieq-app-image-storage/covers-images',
                 Key: ministryOfEdition.cover,

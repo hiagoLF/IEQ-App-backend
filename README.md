@@ -384,3 +384,8 @@ Encriptação: Bcrypt
 #### DELETE /album/:id --> Ok
 --> Deletar album
 
+
+
+admo --> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZTA5M2Q5ODZiZGM2MTRjYzBlOGNmMSIsImlhdCI6MTYwODU1Mzc4NSwiZXhwIjoxNjA4NjQwMTg1fQ.JspwkRHJAbh3gfRxTukvk2nuJI7DvYJV1IY7OrJ-NAE
+
+xandom --> eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmZTA5NDFmODZiZGM2MTRjYzBlOGNmMiIsImlhdCI6MTYwODU1MzUwMywiZXhwIjoxNjA4NjM5OTAzfQ.3lYHBx5laGwQTbb24epuPQuFWbI8KCkMgT9BYZeRUFg

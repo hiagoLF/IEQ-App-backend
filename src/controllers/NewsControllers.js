@@ -6,6 +6,8 @@ const { findByIdAndDelete } = require('../models/NewsSchema')
 
 const coverBucket = 'ieq-app-image-storage/covers-images'
 
+const error = undefined
+
 module.exports = {
     async create(req, res){
         // Buscar file
@@ -13,7 +15,7 @@ module.exports = {
 
         // Verificar se é administrador ou líder de ministério
         const {userId} = req
-        const user = await User.findById(userId)
+        const user = await User.findById(userId).catch((err) => error = err)
         var isLeader = false
         for(myn of user.ministry){
             console.log(myn)
@@ -49,7 +51,7 @@ module.exports = {
             authorName,
             text,
             cover: file? file.key: undefined
-        })
+        }).catch((err) => error = err)
 
         // Ver se salvou mesmo
         if(!news){
@@ -85,7 +87,7 @@ module.exports = {
         const {id} = req.params
 
         // Buscar notícia no banco de dados
-        const news = await News.findById(id).catch((err) => {errors.push(err)})
+        const news = await News.findById(id).catch((err) => {errors.push(err)}).catch((err) => error = err)
         
         // Verificar existe essa notícia
         if(!news){
@@ -94,7 +96,7 @@ module.exports = {
         }
 
         // Buscar usuário no banco de dados
-        const user = await User.findById(userId)
+        const user = await User.findById(userId).catch((err) => error = err)
 
         // Verificar se é autor da notícia ou administrador
         if(news.authorID.toString() != userId){
@@ -144,7 +146,7 @@ module.exports = {
             {
                 page, limit: 10, select: '-authorID'
             }
-        )
+        ).catch((err) => error = err)
 
         // Enviar de volta
         return res.status(200).json(news)
@@ -156,7 +158,7 @@ module.exports = {
 
         // Pegar ID de quem fez a requisição e buscar usuário
         const {userId} = req
-        const userPublished = await User.findById(userId)
+        const userPublished = await User.findById(userId).catch((err) => error = err)
 
         // Instanciar se é adm
         const isAdm = userPublished.type < 2 ? true : false
@@ -171,7 +173,7 @@ module.exports = {
                 {
                     page, limit: 10, select: '-authorID'
                 }
-            )
+            ).catch((err) => error = err)
         } else {
             // Se não for adm, pegar as notícias que o usuário escreveu
             unpublishedNews = await News.paginate(
@@ -182,7 +184,7 @@ module.exports = {
                 {
                     page, limit: 10, select: '-authorID'
                 }
-            )
+            ).catch((err) => error = err)
         }
 
         // Verificar se houveram notícias mesmo
@@ -209,7 +211,7 @@ module.exports = {
         }
 
         // Buscar usuário no banco
-        const user = await User.findById(userId)
+        const user = await User.findById(userId).catch((err) => error = err)
         
         // Instanciar se é adm
         const isAdm = user.type < 2 ? true: false
@@ -222,7 +224,7 @@ module.exports = {
         }
 
         // Deltar a notícia
-        const deletedNews = await News.findByIdAndDelete(id)
+        const deletedNews = await News.findByIdAndDelete(id).catch((err) => error = err)
         if(!deletedNews){
             return res.status(400).json({error: 'failed on news deletion'})
         }
