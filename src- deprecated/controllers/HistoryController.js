@@ -35,12 +35,15 @@ module.exports = {
             return res.status(400).json({ error: 'history already exists' })
         }
 
+
+        console.log('links >>', links)
+
         // Criar uma nova história com as informações acima
         const newHistory = await Histories.create({
             title,
             descripription,
             text,
-            links,
+            links: JSON.parse(links),
             published,
             cover: file ? file.key : null
         }).catch((err) => error = err)
