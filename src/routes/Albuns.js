@@ -12,6 +12,7 @@ const multerConfig = require('../config/multer')
 const routes = router()
 
 // Rotas Abertas
+routes.get('/:page', AlbumRoutes.getAlbunsBypage)
 
 // Barreira de Autenticação do Usuário
 routes.use(authMiddleware)

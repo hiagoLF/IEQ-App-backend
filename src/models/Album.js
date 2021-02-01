@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 
+const paginate = require('mongoose-paginate')
+
 const AlbumSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -12,5 +14,7 @@ const AlbumSchema = new mongoose.Schema({
         required: false,
     }
 })
+
+AlbumSchema.plugin(paginate)
 
 module.exports =  mongoose.model('album', AlbumSchema)

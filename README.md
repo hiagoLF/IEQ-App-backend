@@ -1,6 +1,6 @@
 # Projeto IEQApp BackEnd
-Aplicativo para Igreja do Evanjelho Quadrangular em Iguaí Bahia
-Funções: Cadastro de membros e carteirinha de identificação, Inscrições em eventos da igreja, e Informações Gerais.
+* Aplicativo para Igreja do Evanjelho Quadrangular em Iguaí Bahia
+* Funções: Cadastro de membros e carteirinha de identificação, Inscrições em eventos da igreja, e Informações Gerais.
 
 # Tecnologias Utilizadas
 * Base: NodeJs
@@ -161,7 +161,7 @@ Funções: Cadastro de membros e carteirinha de identificação, Inscrições em
 }
 
 #### DELETE /post/:id --> OK
---> Deletar post
+--> Deletar postagem
 --> req ==> headers {
     Authorization: Bearer (token do adm)
 }
@@ -210,5 +210,5 @@ Funções: Cadastro de membros e carteirinha de identificação, Inscrições em
     Form { albumImage: (Nova imagem) }
 }
 
-#### GET /album/:id
---> Pegar determinado album pelo seu id
+#### GET /album/:page --> OK
+--> Pegar albuns por página

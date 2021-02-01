@@ -132,10 +132,28 @@ module.exports = {
         // Pegar a lista images do album que foi removido
         const { images } = removedAlbum
         // Deletar todas as imagens dele na AWS
-        for(const image of images){
+        for (const image of images) {
             awsFunctions.deleteFile(image, bucketName)
         }
         // Confirmação
-        return res.status(200).json({message: 'album removed'})
+        return res.status(200).json({ message: 'album removed' })
+    },
+
+
+
+
+    // ..........................................................
+    // Pegando albuns por página
+    async getAlbunsBypage(req, res) {
+        // Pegar o número da página
+        const { page } = req.params
+        // Buscar todos os alguns no paginate
+        const albuns = await Albuns.paginate({}, { page, limit: 10}).catch(() => {error = true})
+        // Ver se encontrou alguma coisa
+        if(!albuns || error){
+            return res.status(404).json({error: 'albuns not found'})
+        }
+        // Enviar albuns
+        return res.status(200).json(albuns)
     },
 }
