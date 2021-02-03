@@ -2,7 +2,6 @@
 const Posts = require('../models/Post')
 const postFunctions = require('../GenericFunctions/post')
 const awsFunctions = require('../GenericFunctions/aws')
-const post = require('../GenericFunctions/post')
 
 // Error Instance
 const error = undefined

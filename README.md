@@ -212,3 +212,46 @@
 
 #### GET /album/:page --> OK
 --> Pegar albuns por página
+
+
+
+
+
+## Rotas de eventos
+#### POST /event/create --> OK
+--> Criar Evento
+--> req ==> {
+    headers { Authorization: Bearer (token adm ou de um dos editores da postagem) }
+    JSON {
+        eventADMs
+        { ... dados do post, no mesmo formato de post }
+    }
+}
+
+#### DELETE /event/:id --> OK
+--> Deletar Evento
+--> req ==> headers { Authorization: Bearer (token adm ou de um dos editores da postagem) }
+
+#### PUT /event/edit/:id --> OK
+--> Editar editar administradores de um evento
+    headers { Authorization: Bearer (token adm ou de um dos editores da postagem) }
+    JSON {
+        eventADMs
+        { ... dados do post, no mesmo formato de post }
+    }
+
+#### POST /event/:id/subscribe --> OK
+--> Se inscrever em um evento
+--> req ==> {
+    headers { Authorization: Bearer (token do usuário) }
+}
+
+#### POST /event/confirm/:eventid/:identificator --> OK
+--> Confirmar Alguém em um evento
+--> req ==> {
+        headers { Authorization: Bearer (token de administrador ou de alguém autorizado no evento) }
+}
+
+#### GET /event/:page --> OK
+--> Buscar Eventos por página
+--> req ==> headers { Authorization: Bearer (token de usuário) }
