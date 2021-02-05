@@ -150,12 +150,14 @@ module.exports = {
         // Pegar a página do evento
         const { page } = req.params
         // Buscar Eventos no banco de dados
-        const events = await Events.paginate({}, { page, limit: 10, populate: 'postId' }).catch(() => {error = true})
+        const events = await Events.paginate({},
+            { page, limit: 10, populate: 'postId', sort: { _id: 'desc' } }
+        ).catch(() => { error = true })
         // Verificar se encontrou mesmo
-        if(!events || error){
-            return res.status(404).json({error: 'not found'})
+        if (!events || error) {
+            return res.status(404).json({ error: 'not found' })
         }
-        
+
         return res.status(200).json(events)
     },
 }

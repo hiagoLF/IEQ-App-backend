@@ -148,10 +148,12 @@ module.exports = {
         // Pegar o número da página
         const { page } = req.params
         // Buscar todos os alguns no paginate
-        const albuns = await Albuns.paginate({}, { page, limit: 10}).catch(() => {error = true})
+        const albuns = await Albuns.paginate({},
+            { page, limit: 10, sort: { _id: 'desc' } }
+        ).catch(() => { error = true })
         // Ver se encontrou alguma coisa
-        if(!albuns || error){
-            return res.status(404).json({error: 'albuns not found'})
+        if (!albuns || error) {
+            return res.status(404).json({ error: 'albuns not found' })
         }
         // Enviar albuns
         return res.status(200).json(albuns)

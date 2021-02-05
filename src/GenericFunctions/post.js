@@ -201,7 +201,7 @@ module.exports = {
     async getPosts(indexId, page) {
         const posts = await Posts.paginate(
             { indexId },
-            { page, limit: 10 }
+            { page, limit: 10, sort: { _id: 'desc' } }
         ).catch(() => { error = true })
         if(!posts || error){
             return false
