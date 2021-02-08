@@ -43,7 +43,7 @@ module.exports = function authentication(req, res, next) {
         if (!user || user.type > 2) {
             // Ocultar dados para serem enviados
             gFunctions.hideData(['password', '_id'], user._doc)
-            return res.status(200).json({ message: 'user need to be confirmed', user })
+            return res.status(200).json(user)
         }
         // Criar um Objeto no req que contenha os dados do usuário
         req.userData = user
