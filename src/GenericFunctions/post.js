@@ -3,6 +3,7 @@ const PostIndex = require('../models/PostsIndex')
 const Posts = require('../models/Post')
 const GenericFunctions = require('.')
 const awsFunctions = require('../GenericFunctions/aws')
+const Albuns = require('../models/Album')
 
 // Error Instance
 const error = undefined
@@ -171,8 +172,7 @@ module.exports = {
         // Percorrer todos os índicies...
         for (const index of indexes) {
             // Buscar posts do índicie atual
-            const posts = (await Posts.paginate({ indexId: index._id }, { page: 1, limit: 10 })).docs
-            console.log(posts)
+            const posts = (await Posts.paginate({ indexId: index._doc._id }, { page: 1, limit: 10 })).docs
             // criar um array com as imagens deles
             var postsImage = []
             for (const post of posts) {
@@ -187,7 +187,17 @@ module.exports = {
                 // Incluir como image neste íncie
                 newIndexArray.push({ ...index._doc, image: randomImage })
             } else {
-                newIndexArray.push(index)
+                // Se o id desse index for 002...
+                if (index._doc._id == '002') {
+                    // Buscar 1 album
+                    const albumResult = await Albuns.paginate({}, {limit: 1, page: 1}).catch(() => {})
+                    // Se tiver album...
+                    if(albumResult || !error){
+                        // Buscar a primeira foto deste album e colocar em index._doc.image
+                        index._doc.image = albumResult.docs[0].images[0]
+                    }
+                }
+                newIndexArray.push(index._doc)
             }
         }
         // Retornar o novo array de índicies
@@ -198,12 +208,12 @@ module.exports = {
 
     // .....................................
     // Buscando os posts por índicie e página
-    async getPosts(indexId, page) {
+    async getPosts(indexId, page, populate=undefined) {
         const posts = await Posts.paginate(
             { indexId },
-            { page, limit: 10, sort: { _id: 'desc' } }
+            { page, limit: 10, sort: { _id: 'desc' }, populate }
         ).catch(() => { error = true })
-        if(!posts || error){
+        if (!posts || error) {
             return false
         }
         return posts

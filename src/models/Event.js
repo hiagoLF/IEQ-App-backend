@@ -6,10 +6,7 @@ const paginate = require('mongoose-paginate')
 const Posts = require('./Post')
 
 const EventSchema = new mongoose.Schema({
-    postId: {
-        type: String,
-        ref: Posts,
-    },
+
     confirmedSubscribers: {
         type: Array,
         required: false,

@@ -13,6 +13,7 @@ const multerConfig = require('../config/multer')
 const routes = router()
 
 // Rotas Abertas
+routes.get('/:postId', PostControllers.getPostById)
 
 // Autenticação de Usuário
 routes.use(authMiddleware)

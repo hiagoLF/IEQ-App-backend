@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const paginate = require('mongoose-paginate')
 
 const AlbumSchema = new mongoose.Schema({
-    title: {
+    albumTitle: {
         type: String,
         required: true,
         minlength: 3,

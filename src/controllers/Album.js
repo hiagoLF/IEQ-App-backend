@@ -19,9 +19,9 @@ module.exports = {
     // Criar Novo Album
     async create(req, res) {
         // Pegar title enviado
-        const { title } = req.body
+        const { albumTitle } = req.body
         // Criar o album
-        const newAlbum = await Albuns.create({ title }).catch(() => { error = true })
+        const newAlbum = await Albuns.create({ albumTitle }).catch(() => { error = true })
         // Ver se criou
         if (!newAlbum || error) {
             return res.status(400).json({ error: 'album not created' })
@@ -39,9 +39,9 @@ module.exports = {
         // Pegar o id do album
         const { id } = req.params
         // Pegar o title enviado
-        const { title } = req.body
+        const { albumTitle } = req.body
         // Buscar e modificar
-        const updatedAlbum = await Albuns.findByIdAndUpdate(id, { title }).catch(() => { error = true })
+        const updatedAlbum = await Albuns.findByIdAndUpdate(id, { albumTitle }).catch(() => { error = true })
         // Ver se modificou alguma coisa
         if (!updatedAlbum || error) {
             return res.status(404).json({ error: 'album not found' })

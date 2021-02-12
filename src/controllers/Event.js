@@ -44,6 +44,10 @@ module.exports = {
         if (!newEvent || error) {
             return res.status(400).json({ error: 'post was created but not event' })
         }
+        // Colocar o id do evento no post
+        newPost.eventId = newEvent._id
+        // Salvar o post novamente
+        await newPost.save().catch(() => {})
         // Confirmação
         return res.status(200).json({ message: 'event created' })
     },
@@ -150,14 +154,31 @@ module.exports = {
         // Pegar a página do evento
         const { page } = req.params
         // Buscar Eventos no banco de dados
-        const events = await Events.paginate({},
+        var events = await Events.paginate({},
             { page, limit: 10, populate: 'postId', sort: { _id: 'desc' } }
         ).catch(() => { error = true })
         // Verificar se encontrou mesmo
         if (!events || error) {
             return res.status(404).json({ error: 'not found' })
         }
-
         return res.status(200).json(events)
+    },
+
+
+
+
+    // .......................................................
+    // Pegar Evento por seu id
+    async getEventById(req, res){
+        // Pegar o id do evento
+        const {eventId} = req.params
+        // Pegar o evento
+        const event = await Events.findById(eventId).catch(() => {error = true})
+        // Verificar se encontrou
+        if(!event || error){
+            return res.status(404).json({error: 'event not found'})
+        }
+        // Enviar
+        return res.status(200).json(event)
     },
 }

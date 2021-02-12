@@ -173,6 +173,8 @@
     coverImage: (Imagem quer será colocada como cover do post)
 }
 
+#### GET /post/:postId
+
 
 
 
@@ -255,3 +257,6 @@
 #### GET /event/:page --> OK
 --> Buscar Eventos por página
 --> req ==> headers { Authorization: Bearer (token de usuário) }
+
+#### GET /event/byid/:eventId
+--> Buscar um evento por seu id

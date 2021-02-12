@@ -1,6 +1,9 @@
+// Node Modules
 const mongoose = require('mongoose')
-
 const paginate = require('mongoose-paginate')
+
+// Local Modules
+const Events = require('./Event')
 
 const PostSchema = new mongoose.Schema({
     title: {
@@ -12,6 +15,11 @@ const PostSchema = new mongoose.Schema({
     indexId: {
         type: String,
         required: true
+    },
+    eventId: {
+        type: String,
+        required: false,
+        ref: Events,
     },
     image: {
         type: String,

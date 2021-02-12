@@ -1,6 +1,8 @@
 // Local Modules
 const PostsIndex = require('../models/PostsIndex')
 const PostsFunctions = require('../GenericFunctions/post')
+const AlbumFunctions = require('../GenericFunctions/album')
+
 
 const error = undefined
 
@@ -73,11 +75,14 @@ module.exports = {
     // Buscar todos os índicies
     async findEveryIndex(req, res) {
         // Pegar todos os índicies
-        const indexes = await PostsIndex.find().catch(() => { error })
+        var indexes = await PostsIndex.find().sort({_id: 'desc'}).catch(() => { error })
         // Verificar se conseguiu pegar
-        if (!indexes || error){
-            return res.status(404).json({error: 'no index found'})
+        if (!indexes || error) {
+            return res.status(404).json({ error: 'no index found' })
         }
+        // Incluir os dois indicies de Eventos(001) e Albuns(002)
+        indexes.push({ _doc: { _id: "001", name: "Eventos" } })
+        indexes.push({ _doc: { _id: "002", name: "Albuns" } })
         // Inclui Thumb em cada índicie
         const indexWithThumbnail = await PostsFunctions.includeThumbOnIndexes(indexes)
         // Enviar
@@ -89,13 +94,28 @@ module.exports = {
 
     // ............................................
     // Buscar Postagens por índicie e organizadas em páginas
-    async findPostsByIndexAndPaginate(req, res){
+    async findPostsByIndexAndPaginate(req, res) {
         // Pegar o id do index e a página
-        const {indexid, page} = req.params
+        const { indexid, page } = req.params
         // Buscar as postagens públicas e paginadas
-        const posts = await PostsFunctions.getPosts(indexid, page)
-        if(!posts){
-            return res.status(404).json({error: 'posts not found'})
+        // Fazer um Switch com opções para 001, 002 e o default para postagens comuns
+        var posts = undefined
+        switch (indexid) {
+            // Opção 001 (Eventos)
+            case '001':
+                // Pegar os posts de eventos
+                posts = await PostsFunctions.getPosts(indexid, page, populate='eventId')
+                break
+            // Opção 002 (Albuns)
+            case '002':
+                posts = await AlbumFunctions.getAlbunsBypage(page)
+                break
+            default:
+                posts = await PostsFunctions.getPosts(indexid, page)
+        }
+        
+        if (!posts) {
+            return res.status(404).json({ error: 'posts not found' })
         }
         // Enviar
         return res.status(200).json(posts)

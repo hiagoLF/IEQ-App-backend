@@ -118,5 +118,29 @@ module.exports = {
         }
         // Mensagem de confirmação
         return res.status(200).json({message: 'post image updated'})
+    },
+
+
+
+
+    // ...................................
+    // Pegar Post pelo ID
+    async getPostById(req, res){
+        // Pegar o postId
+        const {postId} = req.params
+        
+        // Buscar o post e popular em eventId
+        const post = await Posts.findById(postId).populate('eventId')
+        console.log(post)
+        // Verificar se encontrou
+        if(!post){
+            return res.status(404).json({error: 'post not found'})
+        }
+        // Enviar
+        return res.status(200).json(post)
     }
 }
+
+
+
+

@@ -98,7 +98,4 @@ module.exports = {
 
 
 
-
-    // ...................................
-    // Preencher eventos com suas postagens
 }

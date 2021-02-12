@@ -11,12 +11,13 @@ const EventControllers = require('../controllers/Event')
 const routes = router()
 
 // Rotas Abertas
+routes.get('/:page', EventControllers.getEventsByPage)
+routes.get('/byid/:eventId', EventControllers.getEventById)
 
 // Barreira de Autenticação
 routes.use(authMiddleware)
 
 // Rotas para usuários logados
-routes.get('/:page', EventControllers.getEventsByPage)
 routes.post('/:id/subscribe', EventControllers.subscribeOnEvent)
 routes.post('/confirm/:eventid/:identificator', authToConfirmSubscriber, EventControllers.confirmSubscriber)
 
