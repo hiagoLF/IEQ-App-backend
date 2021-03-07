@@ -176,7 +176,6 @@ module.exports = {
             // criar um array com as imagens deles
             var postsImage = []
             for (const post of posts) {
-                console.log(post.image)
                 post.image && postsImage.push(post.image)
             }
             // Se tiver imagem nestes posts...
@@ -192,7 +191,7 @@ module.exports = {
                     // Buscar 1 album
                     const albumResult = await Albuns.paginate({}, {limit: 1, page: 1}).catch(() => {})
                     // Se tiver album...
-                    if(albumResult || !error){
+                    if(albumResult.docs.length > 0){
                         // Buscar a primeira foto deste album e colocar em index._doc.image
                         index._doc.image = albumResult.docs[0].images[0]
                     }

@@ -36,7 +36,7 @@ module.exports = {
             await Posts.findByIdAndDelete(newPost._id)
         }
         // Mensagem de confirmação
-        return res.status(200).json({ message: 'post created' })
+        return res.status(200).json({ message: 'post created', id: newPost._id })
     },
 
 

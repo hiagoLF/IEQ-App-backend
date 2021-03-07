@@ -25,7 +25,7 @@ routes.use(authAdmMiddleware)
 // Rotas dos administradores
 routes.post('/create', AlbumRoutes.create)
 routes.put('/update/:id', AlbumRoutes.updateTitle)
-routes.put('/:albumid/newimage', multer(multerConfig).single('albumImage'), AlbumRoutes.insertNewImage)
+routes.put('/:albumid/newimage', multer(multerConfig).array('albumImage'), AlbumRoutes.insertNewImage)
 routes.delete('/:albumid/image', AlbumRoutes.deleteImageFromAlbum)
 routes.delete('/:id', AlbumRoutes.deleteAlbum)
 

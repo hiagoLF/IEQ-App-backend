@@ -19,6 +19,14 @@ const EventSchema = new mongoose.Schema({
         type: Array,
         required: false,
     },
+    ministryId: {
+        type: String,
+        required: false,
+    },
+    postId: {
+        type: String,
+        required: true
+    }
 })
 
 EventSchema.plugin(paginate)

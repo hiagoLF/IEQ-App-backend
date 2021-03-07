@@ -87,6 +87,16 @@
     Authorization: Bearer (token de administrador)
 }
 
+#### PUT /user/me/password
+* Mudar a senha do usuário que fez a requisição
+* req ==> {
+    ** header -> Authorization: Bearer (token do usuário que quer mudar a senha)
+    ** body -> {
+        *** lastPassword: (Antiga Senha)
+        *** newPassword: (Nova Senha)
+    }
+}
+
 #### DELETE /user/lougout --> OK
 --> Deslogar usuário
 
@@ -174,6 +184,7 @@
 }
 
 #### GET /post/:postId
+--> Pegar post pelo seu id
 
 
 

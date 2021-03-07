@@ -27,7 +27,7 @@ module.exports = {
             return res.status(400).json({ error: 'album not created' })
         }
         // Confirmação
-        return res.status(200).json({ message: 'album created' })
+        return res.status(200).json(newAlbum)
     },
 
 
@@ -57,9 +57,10 @@ module.exports = {
     // Inserir Nova imagem em um album
     async insertNewImage(req, res) {
         // Pegar file
-        const { file } = req
-        // Verificar se file.key existe
-        if (!file.key) {
+        const { files } = req
+        console.log(files)
+        // Verificar se files existe
+        if (files.length == 0) {
             return res.status(400).json({ error: 'albumImage not provided' })
         }
         // Pegar o id do album
@@ -70,8 +71,10 @@ module.exports = {
         if (!albumToInsertImage || error) {
             return res.status(404).json({ error: 'album not found' })
         }
-        // Inserir imagem no seu array de imagens
-        albumToInsertImage.images.push(file.key)
+        // Inserir imagens no seu array de imagens
+        files.map((file) => {
+            albumToInsertImage.images.push(file.key)
+        })
         // Salvar o album
         const updateResult = await Albuns.findByIdAndUpdate(
             albumToInsertImage.id,
@@ -83,18 +86,19 @@ module.exports = {
             awsFunctions.deleteFile(file.key, bucketName)
         }
         // Confirmação
-        return res.status(200).json({ message: 'image updated' })
+        return res.status(200).json({ message: 'images updated' })
     },
 
 
 
 
     // ...........................................
-    // Deletando uma imagem de um album
+    // Deletando imagens de um album
     async deleteImageFromAlbum(req, res) {
-        // Pegar id do album e key da imagem
+        // Pegar id do album e keys da imagem
         const { albumid } = req.params
-        const { imageKey } = req.body
+        const { imageKeys } = req.body
+        console.log(imageKeys)
         // Buscar o album
         const albumToRemoveImage = await Albuns.findById(albumid).catch(() => { error = true })
         // Verificar se o album existe
@@ -102,17 +106,19 @@ module.exports = {
             return res.status(404).json({ message: 'album not found' })
         }
         // Remover a imagem da sua lista de imagens
-        const imageRemovalResult = await albumFunctions.removeImageOfAlbum(albumToRemoveImage, imageKey)
+        const imageRemovalResult = await albumFunctions.removeImageOfAlbum(albumToRemoveImage, imageKeys)
         // Verificar se a imagem foi realmente encontrada
         if (!imageRemovalResult) {
             return res.status(404).json({ error: 'image not found' })
         }
-        // Remover imagem da aws
-        awsFunctions.deleteFile(imageKey, bucketName)
+        // Remover as imagens da aws
+        for(const imageKey of imageKeys){
+            awsFunctions.deleteFile(imageKey, bucketName)
+        }
         // Salvar informação no banco de dados
         await Albuns.findByIdAndUpdate(albumid, { images: imageRemovalResult.images })
         // Mensagem de confirmação
-        return res.status(200).json({ message: 'image removed' })
+        return res.status(200).json({ message: 'images removed' })
     },
 
 

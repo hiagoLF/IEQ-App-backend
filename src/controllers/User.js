@@ -129,15 +129,15 @@ module.exports = {
         var { type, login, name, memberSince, password } = req.body
         // Se não for adm...
         if (user.type > 1) {
-            // Zerar informações de name, memberSince e type
+            // Zerar informações de name, memberSince, type e password
             name = undefined
             memberSince = undefined
-            type = undefined
+            type = undefined,
+            password = undefined
         } else {
             // Se for adm...
             // Instanciar se é adm 0
             const isZeroAdm = user.type == 0 ? true : false
-            console.log(isZeroAdm)
             // Buscar usuário pelo identificator e substituir user pelas informações deste usuário
             const { identificator } = req.params
             user = await userFunctions.getUser('identificator', identificator)
@@ -290,5 +290,36 @@ module.exports = {
         }
         // Enviar resposta
         return res.status(200).json({ message: 'success on logout' })
+    },
+
+
+
+    // ........................................................
+    // Usuário alterar a sua senha
+    async changeMyPassword(req, res){
+        // Pegar lastPassword e newPassword
+        const {lastPassword, newPassword} = req.body
+        // Verificar se lastPassword e newPassword existem
+        if(!lastPassword || !newPassword){
+            return res.status(400).json({error: 'lastPassword or newPassword not provided'})
+        }
+        // Pegar informações do usuário que fez a requisição
+        const {userData} = req
+        // Comparar antiga senha com lastPassword
+        const passwordsMatch = await bcrypt.compare(lastPassword, userData.password)
+        if(!passwordsMatch){
+            return res.status(403).json({error: 'lastPassword incorrect'})
+        }
+        // Encriptar a Nova Senha
+        const newEncryptedPassword = await bcrypt.hash(newPassword, 10)
+        // Salvar Usuário com sua nova senha
+        userData.password = newEncryptedPassword
+        const userSaved = await userFunctions.saveUser(userData)
+        // Verificar se Salvou
+        if(!userSaved){
+            return res.status(400).json({error: 'failed on user update'})
+        }
+        // Confirmação
+        return res.status(200).json({error: 'password changed'})
     }
 }

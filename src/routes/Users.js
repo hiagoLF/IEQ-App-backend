@@ -23,6 +23,7 @@ routes.use(authMiddleware)
 routes.get('/refresh', UserController.refresh)
 routes.put('/edit/:identificator', UserController.edit)
 routes.put('/editimage/:identificator', multer(multerConfig).single('image'), UserController.editImage)
+routes.put('/me/password', UserController.changeMyPassword)
 
 // Barreira de Autenticação para administrador
 routes.use(authAdministratorMiddleware)

@@ -28,7 +28,7 @@ module.exports = {
         data.indexId = '001'
         // Criar postagem com os dados informados
         const newPost = await Posts.create({ ...data }).catch(() => { error = true })
-        // Verificor se criou
+        // Verificar se criou
         if (!newPost || error) {
             return res.status(400).json({ message: 'creation failed' })
         }
@@ -49,7 +49,7 @@ module.exports = {
         // Salvar o post novamente
         await newPost.save().catch(() => {})
         // Confirmação
-        return res.status(200).json({ message: 'event created' })
+        return res.status(200).json(newPost)
     },
 
 
