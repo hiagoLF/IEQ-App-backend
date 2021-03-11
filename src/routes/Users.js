@@ -32,5 +32,6 @@ routes.use(authAdministratorMiddleware)
 routes.delete('/:identificator', UserController.delete)
 routes.get('/byname/:name', UserController.getUsersByName)
 routes.get('/bypage/:page', UserController.getUsersByPage)
+routes.get('/particular/:identificator', UserController.getUsersByIdentificator)
 
 module.exports = routes

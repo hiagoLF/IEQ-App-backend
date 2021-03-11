@@ -1,5 +1,6 @@
 // Local Modules
 const Events = require('../models/Event')
+const Users = require('../models/User')
 
 // Error Instance
 const error = undefined
@@ -98,4 +99,28 @@ module.exports = {
 
 
 
+    // ......................................................
+    // Popular um evento com os usuários
+    async userPopulateEvent(event) {
+        // Percorrer confirmedSubscribers mostrando o índicie i
+        for (var i = 0; i < event.confirmedSubscribers.length; i++) {
+            // No confirmedSubscribers atual...
+            // Buscar identificator, name e image pelo identificator
+            const user = await Users.findOne({ identificator: event.confirmedSubscribers[i] })
+                .select('identificator name image -_id').catch(() => { })
+            // Substituir o confirmedSubscribers[i] pelo valor recebido
+            event.confirmedSubscribers[i] = user._doc
+        }
+        // Percorrer unconfirmedSubscribers mostrando o índicie i
+        for (var i = 0; i < event.unconfirmedSubscribers.length; i++) {
+            // No unconfirmedSubscribers atual...
+            // Buscar identificator, name e image pelo identificator
+            const user = await Users.findOne({ identificator: event.unconfirmedSubscribers[i] })
+                .select('identificator name image -_id').catch(() => { })
+            // Substituir o confirmedSubscribers[i] pelo valor recebido
+            event.unconfirmedSubscribers[i] = user._doc
+        }
+        // Retornar event
+        return event
+    }
 }

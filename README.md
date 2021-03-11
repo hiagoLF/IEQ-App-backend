@@ -81,13 +81,19 @@
     Authorization: Bearer (token de administrador)
 }
 
+#### GET /user/particular/:identificator
+* Pegar Usuário pelo identificator
+* req ==> header {
+    Authorization: Bearer (token de administrador)
+}
+
 #### GET /user/:page --> OK
 --> Pegar todos os usuários por página
 --> req ==> header {
     Authorization: Bearer (token de administrador)
 }
 
-#### PUT /user/me/password
+#### PUT /user/me/password --> OK
 * Mudar a senha do usuário que fez a requisição
 * req ==> {
     ** header -> Authorization: Bearer (token do usuário que quer mudar a senha)

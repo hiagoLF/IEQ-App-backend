@@ -6,6 +6,7 @@ const awsFunctions = require('../GenericFunctions/aws')
 const eventFunctions = require('../GenericFunctions/event')
 const Events = require('../models/Event')
 const Posts = require('../models/Post')
+const { userPopulateEvent } = require('../GenericFunctions/event')
 
 // Error Instance
 const error = undefined
@@ -155,12 +156,13 @@ module.exports = {
         const { page } = req.params
         // Buscar Eventos no banco de dados
         var events = await Events.paginate({},
-            { page, limit: 10, populate: 'postId', sort: { _id: 'desc' } }
+            { page, limit: 10, sort: { _id: 'desc' } }
         ).catch(() => { error = true })
         // Verificar se encontrou mesmo
         if (!events || error) {
             return res.status(404).json({ error: 'not found' })
         }
+        // Enviar
         return res.status(200).json(events)
     },
 
@@ -178,7 +180,9 @@ module.exports = {
         if(!event || error){
             return res.status(404).json({error: 'event not found'})
         }
+        // Popular a lista de confirmedSubscribers e unconfirmedSubscribers
+        const eventPopulates = await userPopulateEvent(event)
         // Enviar
-        return res.status(200).json(event)
+        return res.status(200).json(eventPopulates)
     },
 }

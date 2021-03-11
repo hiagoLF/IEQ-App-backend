@@ -174,7 +174,7 @@ module.exports = {
         // Pegar as informações do usuário
         var user = req.userData
         // Pegar a key da imagem
-        var image = req.file.key
+        var image = req.file ? req.file.key : null
         // Se for adm...
         if (user.type < 2) {
             // Buscar usuário pelo identificator e substituir user pelas informações deste usuário
@@ -186,7 +186,7 @@ module.exports = {
         }
         // Deletar última imagem se haver
         user.image && awsFunctions.deleteFile(user.image, bucketName)
-        // Guardar nome da nova imagem no banco
+        // Salvar no banco
         user.image = image
         // Salvar Usuário
         const result = await userFunctions.saveUser(user)
@@ -320,6 +320,26 @@ module.exports = {
             return res.status(400).json({error: 'failed on user update'})
         }
         // Confirmação
-        return res.status(200).json({error: 'password changed'})
+        return res.status(200).json({message: 'password changed'})
+    },
+
+
+
+    //...........................................................
+    // Pegar Usuário pelo identificador
+    async getUsersByIdentificator(req, res){
+        // Pegar identificator
+        const {identificator} = req.params
+        // Buscar o usuário no banco
+        const user = await userFunctions.getUser(by='identificator', finder=identificator)
+        // Verificar se Buscou
+        if(!user){
+            return res.status(404).json({erro: 'user not found'})
+        }
+        // Retirar Password e _id
+        user.password = undefined
+        user._id = null
+        // Enviar 
+        return res.status(200).json(user._doc)
     }
 }
